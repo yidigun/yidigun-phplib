@@ -1,0 +1,37 @@
+@charset "UTF-8";
+
+/**
+ * hardcore.css
+ * Hardcore text style
+ * require jquery & bootstrap 3.x.
+ */
+
+body{padding-top:50px;}
+
+/* common styles */
+form label{cursor:pointer;}
+.buttons{text-align:right;margin:1em;}
+
+/* list */
+.list-table,
+.list-pagination,
+.list-search,
+.view-section{margin-bottom:40px;}
+
+.list-table{overflow-x:scroll;}
+.list-table table{table-layout:fixed;min-width:100%;width:auto;max-width:10000px;}
+.list-table table caption{font-size:smaller;}
+.list-table table{white-space:nowrap;}
+
+.list-pagination{display:block;text-align:center;margin:0;}
+.list-search{display:block;text-align:center;}
+
+.view-section dl{border-top:1px solid #ccc;border-bottom:2px solid #ccc;}
+.view-section dl:after{content:" ";display:block;height:0;clear:both;}
+.view-section dl dt{border-top:1px solid #ccc;padding:5px;}
+.view-section dl dd{padding:5px 5px 5px 20px;}
+
+@media (min-width: 500px) {
+	.view-section dl dt{float:left;width:25%;height:20px;text-align:right;clear:both;}
+	.view-section dl dd{float:left;width:75%;border-top:1px solid #ccc;}
+}
