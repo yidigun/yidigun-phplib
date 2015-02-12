@@ -31,7 +31,8 @@ class Excel {
 	protected $count = 0;
 	protected $statement = null;
 
-	public function __construct(WebFilter $filter) {
+	public function __construct($title, WebFilter $filter = null) {
+		$this->title = $title,
 		$this->filter = $filter;
 		$this->timestamp = time();
 	}
@@ -57,7 +58,7 @@ class Excel {
 	public function getFilename() {
 		if ($this->filename == null) {
 			$filename = preg_replace('![\s:/\\\\]+!', '_', $this->title);
-			if ($this->filter->filters)
+			if ($this->filter && $this->filter->filters)
 				$filename .= "-{$this->filter->filterString}";
 			$filename .= "-" . date("Ymd_His", $this->timestamp) . ".xls";
 			$this->filename = $filename;
@@ -70,7 +71,7 @@ class Excel {
 	}
 
 	public function getTitle() {
-		return ($this->filter->filters)?
+		return ($this->filter && $this->filter->filters)?
 			"{$this->title} ({$this->filter->filterString})":
 			$this->title;
 	}
@@ -108,7 +109,21 @@ class Excel {
 	 */
 
 	public function column($name, $displayName = null, $type = self::TEXT, $defaultValue = '') {
+
 		$this->addColumn($name, $displayName, $type, $defaultValue);
+		return $this;
+	}
+
+	public function autoColumn() {
+
+		if ($this->statement) {
+
+			$columns = DBManager::getColumnMeta($this->statement);
+			foreach ($columns as $column) {
+				$type = ($column['pdo_type'] == PDO::PARAM_INT)? self::NUMBER: self::TEXT;
+				$this->column($column['name'], null, $type);
+			}
+		}
 		return $this;
 	}
 
