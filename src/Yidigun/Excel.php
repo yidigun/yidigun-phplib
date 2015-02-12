@@ -144,7 +144,7 @@ class Excel {
 	}
 
 	/*
-	 * write
+	 * Hedaer to invoke excel
 	 */
 
 	public function header() {
@@ -152,25 +152,24 @@ class Excel {
 		HTTP::contentDisposition("attachment", $this->getFilename());
 	}
 
-	public function write() {
-		$stdout = new StdoutWriter();
-		$this->writeTo($stdout);
+	/*
+	 * HTML type export
+	 */
+
+	public function write(Writer &$writer) {
+
+		$this->writeHtmlHeader($writer);
+		$this->writeHtmlTable($writer);
+		$this->writeHtmlFooter($writer);
 	}
 
-	public function writeTo(Writer &$writer) {
-
-		$this->writeHeader($writer);
-		$this->writeTable($writer);
-		$this->writeFooter($writer);
-	}
-
-	public function writeTable(Writer &$writer) {
+	protected function writeHtmlTable(Writer &$writer) {
 
 		// meta info
 		$writer->write('<table class="metainfo"><tr><th>Count</th>');
-		$this->writeTableData($writer, self::NUMBER, $this->count);
+		$this->writeHtmlTableData($writer, self::NUMBER, $this->count);
 		$writer->write('</tr><tr><th>Date</th>');
-		$this->writeTableData($writer, self::DATETIME, date('Y-m-d H:i:s', $this->timestamp));
+		$this->writeHtmlTableData($writer, self::DATETIME, date('Y-m-d H:i:s', $this->timestamp));
 		$writer->write('</tr></table><br />');
 
 		// thead
@@ -192,17 +191,17 @@ class Excel {
 				$name = $column['name'];
 				$value = $row[$name];
 				if ($column['name'] == self::INDEX) {
-					$this->writeTableData($writer, self::NUMBER, ($i + 1));
+					$this->writeHtmlTableData($writer, self::NUMBER, ($i + 1));
 				}
 				elseif ($column['name'] == self::RINDEX) {
-					$this->writeTableData($writer, self::NUMBER, ($this->count - $i));
+					$this->writeHtmlTableData($writer, self::NUMBER, ($this->count - $i));
 				}
 				elseif ($column['type'] == self::CODE) {
 					$value = $column['codes'][$value];
-					$this->writeTableData($writer, self::TEXT, (($value)? $value: $column['defaultValue']));
+					$this->writeHtmlTableData($writer, self::TEXT, (($value)? $value: $column['defaultValue']));
 				}
 				else {
-					$this->writeTableData($writer, $column['type'], (($value)? $value: $column['defaultValue']));
+					$this->writeHtmlTableData($writer, $column['type'], (($value)? $value: $column['defaultValue']));
 				}
 			}
 			$writer->write("</tr>");
@@ -211,7 +210,7 @@ class Excel {
 		$writer->write('</tbody></table>');
 	}
 
-	public function writeTableData(Writer $writer, $type, $value) {
+	protected function writeHtmlTableData(Writer $writer, $type, $value) {
 
 		switch ($type) {
 		case 'n':
@@ -249,7 +248,7 @@ class Excel {
 		}
 	}
 
-	public function writeHeader(Writer &$writer) {
+	protected function writeHtmlHeader(Writer &$writer) {
 
 		$title = $this->getTitle();
 
@@ -307,7 +306,7 @@ EOF;
 		$writer->write($header);
 	}
 
-	public function writeFooter(Writer &$writer) {
+	protected function writeHtmlFooter(Writer &$writer) {
 
 		$footer = <<<EOF
 </body>

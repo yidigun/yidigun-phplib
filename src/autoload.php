@@ -53,7 +53,7 @@ spl_autoload_register(function($class){
 			if (file_exists($path)) {
 				$file_exists = true;
 				include_once($path);
-				if (class_exists($class))
+				if (class_exists($class) || interface_exists($class))
 					break;
 			}
 			// force name to lower case and try again
@@ -61,16 +61,19 @@ spl_autoload_register(function($class){
 			if (file_exists($path)) {
 				$file_exists = true;
 				include_once($path);
-				if (class_exists($class))
+				if (class_exists($class) || interface_exists($class))
 					break;
 			}
 		}
 	}
 
 	if ($GLOBALS['autoload_debug']) {
-		echo "[autoloader]: {$class} => {$file}";
-		echo ", file " . (($file_exists)? "exists": "not exists");
-		echo ", class " . ((class_exists($class))? "loaded": "not loaded");
-		echo ".\n";
+		echo "[autoload] {$class}";
+		if ($file_exists)
+			echo " => {$path}";
+		if (class_exists($class) || interface_exists($class))
+			echo ": class loaded.\n";
+		else
+			echo ": class not found!\n";
 	}
 });

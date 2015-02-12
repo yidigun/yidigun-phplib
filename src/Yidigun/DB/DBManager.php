@@ -324,6 +324,15 @@ class DBManager {
 		return $typeName;
 	}
 
+	public static function getColumnMeta(PDOStatement $stmt) {
+
+		$columns = array();
+		for ($i = 0; $i < $stmt->columnCount(); $i++) {
+			$columns[] = $stmt->getColumnMeta($i);
+		}
+		return $columns;
+	}
+
 	public static function mergeParams(&$params, array $additionalParams) {
 		foreach ($additionalParams as $column => $value) {
 			if (!isset($params[$column]))
